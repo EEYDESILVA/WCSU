@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@theme {
+  /* === Palette (pinned to the brief) === */
+  --color-oxford-blue: #00122e;
+  --color-cambridge-blue: #a3c1ad;
+  --color-silver: #e2e8f0;
+
+  /* === Type ===
+     Display: Fraunces — an editorial serif, used sparingly for the big
+     moments. Mono: JetBrains Mono — reads like lab-instrument readouts,
+     used for eyebrows, nav, and the specimen catalog numbers on cards.
+     Body: Inter, for actual reading. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* === Motion === */
+  --animate-float-y: float-y 2.6s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2.6s ease-in-out infinite;
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Lenis drives scroll smoothing in JS — keep native smooth-scroll off so
+   the two systems never fight each other. Scrollbars hidden per brief. */
+html {
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+::selection {
+  background: rgb(163 193 173 / 0.35);
+  color: #ffffff;
+}
+
+@layer components {
+  /* The "specimen card" — the signature glass surface used across every
+     chapter. The corner brackets echo the camera reticle the 3D scene
+     draws toward when it zooms onto a card's target object. */
+  .glass-card {
+    @apply relative rounded-2xl border border-cambridge-blue/20 bg-black/40 backdrop-blur-md;
+  }
+
+  .glass-card::before,
+  .glass-card::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: rgb(163 193 173 / 0.35);
+    transition: border-color 0.4s ease;
+    pointer-events: none;
+  }
+
+  .glass-card::before {
+    top: 10px;
+    left: 10px;
+    border-top: 1px solid;
+    border-left: 1px solid;
+  }
+
+  .glass-card::after {
+    bottom: 10px;
+    right: 10px;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+  }
+
+  .glass-card:hover::before,
+  .glass-card:hover::after,
+  .glass-card:focus-visible::before,
+  .glass-card:focus-visible::after {
+    border-color: rgb(163 193 173 / 0.9);
+  }
+}
+
+/* Subtle film-grain layer above the 3D scene. Never intercepts clicks. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-y,
+  .animate-pulse-glow {
+    animation: none !important;
+  }
+}
